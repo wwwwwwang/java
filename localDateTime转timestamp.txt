@@ -1,0 +1,60 @@
+LocalDateTime ldt = LocalDateTime.now();
+Timestamp t = Timestamp.valueOf(ldt);
+System.out.println("time (" + ZoneId.systemDefault() + ") = " + t);
+ZoneId zoneId = ZoneId.of("Europe/Brussels");
+Timestamp t2 = Timestamp.from(ldt.atZone(zoneId).toInstant());
+System.out.println("time (" + zoneId + ") = " + t2);
+
+
+long test_timestamp = 1499070300000L;
+LocalDateTime triggerTime =
+        LocalDateTime.ofInstant(Instant.ofEpochMilli(test_timestamp), 
+                                TimeZone.getDefault().toZoneId());  
+
+System.out.println(triggerTime);
+
+long test_timestamp = 1499070300L;
+LocalDateTime triggerTime =
+       LocalDateTime.ofInstant(Instant.ofEpochSecond(test_timestamp),
+                               TimeZone.getDefault().toZoneId());   
+
+System.out.println(triggerTime);
+
+
+
+public String getKey(Long ts, ZoneId zone){
+	if(ts.length == 13) ts = ts/1000;
+	LocalDateTime triggerTime =
+       LocalDateTime.ofInstant(Instant.ofEpochSecond(ts),zone);
+	String minute = triggerTime.getMinute()<30?"00":"30";
+	return triggerTime.getHour() + minute;
+}
+
+ZoneId.of("GMT+2");
+ZoneId.of("UTC");
+ZoneId.of("UT+01:00");
+
+ZoneId.of("Asia/Aden");
+ZoneId.of("Etc/GMT+9");
+ZoneId.of("Asia/Aqtau");
+
+z = ZoneId.of("Z"); //for UTC
+z = ZoneId.of("+02:00"); 
+z = ZoneId.of("-02:00"); 
+
+
+ZoneId z;
+z = ZoneId.of("+02:00"); 
+z = ZoneId.of(ZoneOffset.of("+02:00").getId());
+
+
+select CONCAT(SUBSTR(cast(CONVERT_TZ(FROM_UNIXTIME(timestamp, '%Y-%m-%d %H:%i:00'),'+08:00','+05:30')as char),1,13),':00:00') AS dateStr, count(1) 
+from tvl_report_campaign_rt where id in (816,830) group by dateStr
+
+select CONCAT(SUBSTR(cast(CONVERT_TZ(FROM_UNIXTIME(timestamp, '%Y-%m-%d %H:%i:00'),'+08:00','+09:00')as char),1,13),':00:00') AS dateStr, count(1) 
+from tvl_report_campaign_rt where id in (816,830) group by dateStr
+
+select `timestamp`,campaign_id,sum(imps),sum(vimps) from tvl_report_campaign_rt where `timestamp` > 1524700800 and campaign_id in (107,125) group by campaign_id,`timestamp`
+
+select campaign_id, CONCAT(SUBSTR(CONVERT_TZ(FROM_UNIXTIME(`timestamp`, '%Y-%m-%d %H:%i:00'),'+08:00','+09:30'),1,13),':00:00') AS dateStr, sum(vimps) 
+from tvl_report_campaign_rt where `timestamp` > 1524700800 and campaign_id in (107,125) group by campaign_id,dateStr
